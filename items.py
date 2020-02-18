@@ -1,6 +1,6 @@
 """This script is used to create the items for the game"""
-# __author__ = James Eaton
-# __date__ = 2/16/20
+# Author: James Eaton
+# Date: 2/16/20
 # pylint: disable=C0301
 # pylint: disable=R0903
 
@@ -17,19 +17,22 @@ class Item():
         return "{}\n======\n{}\nValue: {}\n".format(self._name, self._description, self._value)
 
     def is_looted(self, looted):
+        """Determines if an item has been looted from a tile or not"""
         self._looted = looted
         return self._looted
 
 
 class Gold(Item):
+    """Creates a golden coin item"""
     def __init__(self, amount):
         self._amount = amount
-        super().__init__(name="Gold", 
+        super().__init__(name="Gold",
                          description="A round, shiny coin that may be worth something in town.\nThere is a {} print on its face.".format(self._amount),
                          value=self._amount)
 
 
 class Health_Potion(Item):
+    """Creates the health potion item"""
     def __init__(self, heal_amount):
         self._heal_amount = heal_amount
         super().__init__(name="Health Potion",
@@ -38,6 +41,7 @@ class Health_Potion(Item):
 
 
 class Weapon(Item):
+    """Base class for all weapons in the game"""
     def __init__(self, name, description, value, damage):
         self._damage = damage
         super().__init__(name, description, value)
@@ -47,6 +51,7 @@ class Weapon(Item):
 
 
 class Rock(Weapon):
+    """Creates a rock weapon"""
     def __init__(self):
         super().__init__(name="Rock",
                          description="An average sized rock, able to be used to crush some skulls.",
@@ -55,6 +60,7 @@ class Rock(Weapon):
 
 
 class Dagger(Weapon):
+    """Creates the dagger weapon"""
     def __init__(self):
         super().__init__(name="Dagger",
                          description="A small dagger, probably left behind by another adventurer.",
@@ -63,6 +69,7 @@ class Dagger(Weapon):
 
 
 class ShortSword(Weapon):
+    """Creates the short sword weapon"""
     def __init__(self):
         super().__init__(name="Shortsword",
                          description="A rusted longsword. Looks like it's been here for some time, though it looks like it can cut a limb off still.",
@@ -71,6 +78,7 @@ class ShortSword(Weapon):
 
 
 class BroadSword(Weapon):
+    """Creates the broadsword weapon"""
     def __init__(self):
         super().__init__(name="Broadsword",
                          description="A polished looking broadsword. Its owner must've been here recently...",
@@ -80,6 +88,7 @@ class BroadSword(Weapon):
 
 # Dungeon Boss killer
 class DiamondSword(Weapon):
+    """Creates the diamond sword weapon"""
     def __init__(self):
         super().__init__(name="Diamond sword",
                          description="A gleaming sword that looks deadly. This weapon looks like it can cut rocks in half.",

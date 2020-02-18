@@ -1,13 +1,15 @@
 """This script is the main script to be able to play the game. The game continues until the player wins, dies, or quits"""
-# __author__ = James Eaton
-# __date__ = 2/16/20
+# Author: James Eaton
+# Date: 2/17/20
 # pylint: disable=C0301
 # pylint: disable=R0903
+
 import time
 import world
 from player import Player
 
 def play():
+    """Base script for playing the game"""
     world.load_tiles()
     player = Player()
 

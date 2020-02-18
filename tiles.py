@@ -7,18 +7,22 @@
 import enemies, items, actions, world
 
 class MapTile:
+    """Class to create the tiles for the map"""
     def __init__(self, x, y):
         self._x = x
         self._y = y
 
     # The following methods warn us if we create a map tile from this abstract class.
     def intro_text(self):
+        """Text that displays when you enter this room"""
         raise NotImplementedError()
 
     def modify_player(self, player):
+        """Method to modify the player in a certain way"""
         raise NotImplementedError()
 
     def adjacent_moves(self):
+        """Determines what moves are valid in your world"""
         moves = []
         if world.tile_exists(self._x, self._y - 1):
             moves.append(actions.MoveNorth())
@@ -31,6 +35,7 @@ class MapTile:
         return moves
 
     def available_actions(self):
+        """Determines what actions are available based on the adjacent moves"""
         moves = self.adjacent_moves()
         moves.append(actions.ViewInventory())
 
@@ -38,6 +43,7 @@ class MapTile:
 
 
 class StartingRoom(MapTile):
+    """Creates the starting room"""
     def intro_text(self):
         return """
         You find yourself in a dark cave with a single torch flickering on the wall behind you.
@@ -50,38 +56,47 @@ class StartingRoom(MapTile):
 
 
 class EmptyCavePath(MapTile):
+    """Creates an empty hallway for you to go through"""
     def intro_text(self):
+        """Text that displays when you enter this room"""
         return """
         Yet another empty room. Best to keep moving
         """
 
     def modify_player(self, player):
+        """Method to modify the player in a certain way"""
         # No action is taken against the player
         pass
 
 
 class LeaveCaveRoom(MapTile):
+    """Creates the room that wins you the game"""
     def intro_text(self):
+        """Text that displays when you enter this room"""
         return """
         A bit of light shines in this room. That's sunlight!
         You did it! You defeated the dragon and found your way out of the cave.
         """
 
     def modify_player(self, player):
+        """Method to modify the player in a certain way"""
         player._victory = True
 
 
 class EnemyRoom(MapTile):
+    """Creates the enemy rooms"""
     def __init__(self, x, y, enemy):
         self._enemy = enemy
         super().__init__(x, y)
 
     def modify_player(self, player):
+        """Method to modify the player in a certain way"""
         if self._enemy.is_alive():
             player._health_points = player._health_points - self._enemy._damage
             print("The {} attacks! You take {} damage. You now have {} health remaining.".format(self._enemy._name, self._enemy._damage, player._health_points))
 
     def available_actions(self):
+        """Determines the available actions when facing an enemy"""
         if self._enemy.is_alive():
             return [actions.Flee(tile=self), actions.Attack(enemy=self._enemy)]
         else:
@@ -89,10 +104,12 @@ class EnemyRoom(MapTile):
 
 
 class GiantSpiderRoom(EnemyRoom):
+    """Creates the giant spider room"""
     def __init__(self, x, y):
         super().__init__(x, y, enemies.GiantSpider())
 
     def intro_text(self):
+        """Text that displays when you enter this room"""
         if self._enemy.is_alive():
             return """
             A giant spider drops from the ceiling.
@@ -107,10 +124,12 @@ class GiantSpiderRoom(EnemyRoom):
 
 
 class CaveBatRoom(EnemyRoom):
+    """Creates the cave bat room"""
     def __init__(self, x, y):
         super().__init__(x, y, enemies.CaveBat())
 
     def intro_text(self):
+        """Text that displays when you enter this room"""
         if self._enemy.is_alive():
             return """
             A huge cave bat flies into the room.
@@ -125,10 +144,12 @@ class CaveBatRoom(EnemyRoom):
 
 
 class BanditRoom(EnemyRoom):
+    """Creates the bandit room"""
     def __init__(self, x, y):
         super().__init__(x, y, enemies.Bandit())
 
     def intro_text(self):
+        """Text that displays when you enter this room"""
         if self._enemy.is_alive():
             return """
             A menacing looking man walks up to you with a torch in one hand and a dagger in the other.
@@ -143,10 +164,12 @@ class BanditRoom(EnemyRoom):
 
 
 class OgreRoom(EnemyRoom):
+    """Creates the ogre room"""
     def __init__(self, x, y):
         super().__init__(x, y, enemies.Ogre())
 
     def intro_text(self):
+        """Text that displays when you enter this room"""
         if self._enemy.is_alive():
             return """
             An ogre! We aren't in a swamp, but he still looks like he means business.
@@ -161,10 +184,12 @@ class OgreRoom(EnemyRoom):
 
 
 class CaveDragonRoom(EnemyRoom):
+    """Creates the cave dragon room"""
     def __init__(self, x, y):
         super().__init__(x, y, enemies.CaveDragon())
 
     def intro_text(self):
+        """Text that displays when you enter this room"""
         if self._enemy.is_alive():
             return """
             HOLY CRAP, IT'S A DRAGON.
@@ -178,11 +203,13 @@ class CaveDragonRoom(EnemyRoom):
             """
 
 class LootRoom(MapTile):
+    """Creates the loot rooms for the world"""
     def __init__(self, x, y, item):
         self._item = item
         super().__init__(x, y)
 
     def add_loot(self, player):
+        """Adds loot to the player's inventory"""
         if self._item._name in player.get_items() and not self._item._name == "Gold" and self._item._looted == False:
             print("You're already carrying one of these items. No point in carrying more than one.")
         elif self._item._name not in player.get_items() or self._item._name == "Gold":
@@ -191,14 +218,17 @@ class LootRoom(MapTile):
         self._item._looted = True
 
     def modify_player(self, player):
+        """Method to modify the player in a certain way"""
         self.add_loot(player)
 
 
 class FindGoldRoom(LootRoom):
+    """Creates the rooms containing gold"""
     def __init__(self, x, y):
         super().__init__(x, y, items.Gold(5))
 
     def intro_text(self):
+        """Text that displays when you enter this room"""
         if not self._item._looted:
             self._item._looted = True
             return """
@@ -215,10 +245,12 @@ class FindGoldRoom(LootRoom):
 
 
 class FindHealthPotion(LootRoom):
+    """Creates the room with the health potions in"""
     def __init__(self, x, y):
         super().__init__(x, y, items.Health_Potion(10))
 
     def intro_text(self):
+        """Text that displays when you enter this room"""
         if not self._item._looted:
             return "Looks like you've found a health potion!\nYou drink it to restore some health to your player."
 
@@ -229,6 +261,7 @@ class FindHealthPotion(LootRoom):
             """
 
     def modify_player(self, player):
+        """Method to modify the player in a certain way"""
         if not self._item._looted:
             player._health_points = player._health_points + self._item._heal_amount
             self._item._looted = True
@@ -236,12 +269,13 @@ class FindHealthPotion(LootRoom):
 
 
 class FindRockRoom(LootRoom):
+    """Creates the room with the rock weapon in it"""
     def __init__(self, x, y):
         super().__init__(x, y, items.Rock())
 
     def intro_text(self):
+        """Text that displays when you enter this room"""
         if not self._item._looted:
-            #self._item._looted = True
             return """
             You've found a rock...
             It's big enough to bash some heads, but it's just a rock.
@@ -256,10 +290,12 @@ class FindRockRoom(LootRoom):
 
 
 class FindDaggerRoom(LootRoom):
+    """Creates the room with the dagger in it"""
     def __init__(self, x, y):
         super().__init__(x, y, items.Dagger())
 
     def intro_text(self):
+        """Text that displays when you enter this room"""
         if not self._item._looted:
             self._item._looted = True
             return """
@@ -276,10 +312,12 @@ class FindDaggerRoom(LootRoom):
 
 
 class FindShortSwordRoom(LootRoom):
+    """Creates the room with the short sword in it"""
     def __init__(self, x, y):
         super().__init__(x, y, items.ShortSword())
 
     def intro_text(self):
+        """Text that displays when you enter this room"""
         if not self._item._looted:
             self._item._looted = True
             return """
@@ -295,10 +333,12 @@ class FindShortSwordRoom(LootRoom):
 
 
 class FindBroadSwordRoom(LootRoom):
+    """Creates the room with the broadsword in it"""
     def __init__(self, x, y):
         super().__init__(x, y, items.BroadSword())
 
     def intro_text(self):
+        """Text that displays when you enter this room"""
         if not self._item._looted:
             self._item._looted = True
             return """
@@ -314,10 +354,12 @@ class FindBroadSwordRoom(LootRoom):
 
 
 class FindDiamondSwordRoom(LootRoom):
+    """Creates the room with the diamond sword in it"""
     def __init__(self, x, y):
         super().__init__(x, y, items.DiamondSword())
 
     def intro_text(self):
+        """Text that displays when you enter this room"""
         if not self._item._looted:
             self._item._looted = True
             return """

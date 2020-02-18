@@ -10,6 +10,7 @@ WORLD = {}
 STARTING_POSITION = (0, 0)
 
 def load_tiles():
+    """Function to load the tiles and create the world"""
     with open('resources/map.txt', 'r') as f:
         rows = f.readlines()
 
@@ -25,4 +26,5 @@ def load_tiles():
 
 
 def tile_exists(x, y):
+    """Function to determine if the specified tile exists"""
     return WORLD.get((x,y))

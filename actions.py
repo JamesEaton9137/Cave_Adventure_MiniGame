@@ -1,6 +1,6 @@
 """This script is used to create the keyboard actions for the adventure game"""
-# __author__ = James Eaton
-# __date__ = 2/16/20
+# Author: James Eaton
+# Date: 2/17/20
 # pylint: disable=C0301
 # pylint: disable=R0903
 from player import Player
