@@ -32,7 +32,7 @@ def play():
     if player.is_alive() == False:
         print("You have been slain. Your legacy ends here... And you've dropped all of your gold.")
 
-    time.sleep(5)
+    time.sleep(10)
 
 
 if __name__ == "__main__":
